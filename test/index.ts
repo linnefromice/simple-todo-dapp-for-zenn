@@ -31,4 +31,26 @@ describe("TodoList", () => {
       expect((await todoList.tasks(3)).content).to.equal("second task");
     });
   });
+
+  describe("function toggleIsCompleted", async () => {
+    it("emit event named `UpdatedIsCompleted`", async () => {
+      const TodoList = await ethers.getContractFactory("TodoList");
+      const todoList = await TodoList.deploy();
+      await todoList.deployed();
+        await expect(todoList.toggleIsCompleted(1))
+        .to.emit(todoList, "UpdatedIsCompleted")
+        .withArgs(1, true);
+    });
+    it("toggle one task's complete status", async () => {
+      const TodoList = await ethers.getContractFactory("TodoList");
+      const todoList = await TodoList.deploy();
+      await todoList.deployed();
+
+      await todoList.toggleIsCompleted(1);
+      expect((await todoList.tasks(1)).isCompleted).to.equal(true);
+
+      await todoList.toggleIsCompleted(1);
+      expect((await todoList.tasks(1)).isCompleted).to.equal(false);
+    });
+  });
 });
