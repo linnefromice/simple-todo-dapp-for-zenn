@@ -1,19 +1,12 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-describe("Greeter", function () {
-  it("Should return the new greeting once it's changed", async function () {
-    const Greeter = await ethers.getContractFactory("Greeter");
-    const greeter = await Greeter.deploy("Hello, world!");
-    await greeter.deployed();
+describe("TodoList", () => {
+  it("Should has three tasks in task list provided by constructor", async () => {
+    const TodoList = await ethers.getContractFactory("TodoList");
+    const todoList = await TodoList.deploy();
+    await todoList.deployed();
 
-    expect(await greeter.greet()).to.equal("Hello, world!");
-
-    const setGreetingTx = await greeter.setGreeting("Hola, mundo!");
-
-    // wait until the transaction is mined
-    await setGreetingTx.wait();
-
-    expect(await greeter.greet()).to.equal("Hola, mundo!");
+    expect(await todoList.taskCount()).to.equal(1);
   });
 });
