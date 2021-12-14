@@ -13,5 +13,11 @@
     "@types/react-dom": "^17.0.11",
     "parcel": "^2.0.1",
     "parcel-bundler": "^1.12.5"
+  },
+  "browserslist": [
+    "since 2017-06"
+  ],
+  "scripts": {
+    "dev": "parcel src/index.html"
   }
 }
