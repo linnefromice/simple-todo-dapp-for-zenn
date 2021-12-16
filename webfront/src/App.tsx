@@ -10,7 +10,7 @@ type Task = {
 const useContent = (
   contract: ethers.Contract
 ) => {
-  const { taskCount, tasks, createTask } = contract.functions;
+  const { taskCount, tasks, createTask, toggleIsCompleted } = contract.functions;
   const [taskCountValue, setTaskCountValue] = useState<string>("");
   const [tasksValue, setTasksValue] = useState<Task[]>([]);
   const [taskContent, setTaskContent] = useState<string>("");
@@ -39,18 +39,33 @@ const useContent = (
     await createTask(taskContent);
   };
 
+  const requestToggleIsCompleted = async (id: string) => {
+    for (const _task of tasksValue) {
+      if (id === _task.id) {
+        await toggleIsCompleted(id);
+        return;
+      }
+    }
+  }
+
   return {
     taskCount: taskCountValue,
     tasks: tasksValue,
     updateTaskContent,
-    requestCreateTask
+    requestCreateTask,
+    requestToggleIsCompleted
   }
 }
 const Content: VFC<{contract: ethers.Contract}> = ({contract}) => {
-  const { taskCount, tasks, updateTaskContent, requestCreateTask } = useContent(contract);
+  const { taskCount, tasks, updateTaskContent, requestCreateTask, requestToggleIsCompleted } = useContent(contract);
 
   const handleCreateTask = async () => {
     await requestCreateTask();
+    window.location.reload();
+  }
+
+  const handleToggleIsCompleted = async (id: string) => {
+    await requestToggleIsCompleted(id);
     window.location.reload();
   }
 
@@ -75,6 +90,7 @@ const Content: VFC<{contract: ethers.Contract}> = ({contract}) => {
             <td>{t.id}</td>
             <td>{t.content}</td>
             <td>{t.isCompleted ? "Completed" : "Not Completed"}</td>
+            <td><button onClick={() => handleToggleIsCompleted(t.id)}>Change</button></td>
           </tr>)}
         </tbody>
       </table>
