@@ -13,6 +13,7 @@ const useContent = (
   const { taskCount, tasks, createTask } = contract.functions;
   const [taskCountValue, setTaskCountValue] = useState<string>("");
   const [tasksValue, setTasksValue] = useState<Task[]>([]);
+  const [taskContent, setTaskContent] = useState<string>("");
 
   useEffect(() => {
     const getTasks = async () => {
@@ -32,16 +33,33 @@ const useContent = (
     getTasks();
   }, [])
 
+  const updateTaskContent = (e: React.ChangeEvent<HTMLInputElement>) => setTaskContent(e.target.value);
+  const requestCreateTask = async () => {
+    if (taskContent === "") return;
+    await createTask(taskContent);
+  };
+
   return {
     taskCount: taskCountValue,
     tasks: tasksValue,
-g  }
+    updateTaskContent,
+    requestCreateTask
+  }
 }
 const Content: VFC<{contract: ethers.Contract}> = ({contract}) => {
-  const { taskCount, tasks } = useContent(contract);
+  const { taskCount, tasks, updateTaskContent, requestCreateTask } = useContent(contract);
+
+  const handleCreateTask = async () => {
+    await requestCreateTask();
+    window.location.reload();
+  }
 
   return (
     <div>
+      <p>
+        <input onChange={updateTaskContent} />
+        <button onClick={handleCreateTask}>Create Task</button>
+      </p>
       <p>{`taskCount ... ${taskCount}`}</p>
       <table>
         <thead>
